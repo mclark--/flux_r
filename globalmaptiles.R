@@ -1,4 +1,4 @@
-## Load package libraries 
+## Load package libraries
 library("maptools")
 library("sp")
 library("rgeos")
@@ -12,9 +12,9 @@ library("Cairo")
 # ***** means possible parallelization
 
 # Initial settings
-tile.size= 256; 
-initial.res= (2*pi*6378137)/tile.size; 
-origin.shift= (2*pi*6378137)/as.double(2.0); 
+tile.size= 256;
+initial.res= (2*pi*6378137)/tile.size;
+origin.shift= (2*pi*6378137)/as.double(2.0);
 resolution = function(zoom){
   return(initial.res/(2^zoom))
 }
@@ -32,7 +32,7 @@ totalcoordstate = function(state) {
 }
 
 
-coordstoMeters= function (coords, origin.shift){ 
+coordstoMeters= function (coords, origin.shift){
   mx= coords$x * origin.shift / 180.0;
   my1= log(tan((90 + coords$y) * pi / 360.0)) / (pi / 180.0);
   my= my1 * origin.shift / 180.0;
@@ -70,9 +70,9 @@ tilestoQuadkey = function(tiles, zoom) {                                       #
   tiles[2] = (2 ^ (zoom) - 1) - tiles[2]
   quad = function(zoomlevel){
     digit = 0
-    mask = 1 * (2 ^ (zoomlevel - 1))                # bitwise shift 1 to the left by i-1 amount; 
+    mask = 1 * (2 ^ (zoomlevel - 1))                # bitwise shift 1 to the left by i-1 amount;
     if ((bitwAnd(tiles[1], mask) != 0)) {
-      digit = digit + 1                                                      
+      digit = digit + 1
     }
     if ((bitwAnd(tiles[2], mask) != 0)) {
       digit = digit + 2
@@ -117,7 +117,7 @@ tilebounds = function(tileX, tileY, levelofDetail,orgiin.shift){
 
 # Draw tiles from quadkey reference
 draw.tile =function(quadkey){
-  A = 1000	
+  A = 1000
   width = 512
   zoomlevel=nchar(quadkey)
   google_tile = quadkeytoTiles(quadkey)
@@ -142,10 +142,11 @@ draw.tile =function(quadkey){
 
   dir.create(paste(zoomlevel,"/",sep=""),showWarnings=FALSE)
   dir.create(paste(zoomlevel,"/",tms_tile[1],"/",sep=""),showWarnings=FALSE)
-  CairoPNG(file = paste(zoomlevel,"/",tms_tile[1],"/",tms_tile[2],".png",sep=""), width=512, height=512, bg = "transparent")
+  Cairo::CairoPNG(file = paste(zoomlevel,"/",tms_tile[1],"/",tms_tile[2],".png",sep=""), width=512, height=512, bg = "transparent")
   #plot to the corners
   par(mar=c(0,0,0,0))
-  plot(coords$mx,coords$my,pch=20,xlim=c(1,512),ylim=c(512,1),cex=dot_size(zoomlevel),col=rgb(0,0,0,dot_opac(zoomlevel)/255), axes=FALSE,xaxs="i",yaxs="i",bty="n")
+  plot(coords$mx,coords$my,pch=20,xlim=c(1,512),ylim=c(512,1),cex=dot_size(zoomlevel),
+       col=rgb(0,0,0,dot_opac(zoomlevel)/255), axes=FALSE,xaxs="i",yaxs="i",bty="n")
   dev.off()
 }
 
